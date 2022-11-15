@@ -1,16 +1,15 @@
-from util import get_conditional_entropy
-from util import get_letters_probabilities
-from util import get_x_chars_probabilities
+def get_x_words_probabilities(text, x):
+    all_words_groups_count = 0
+    x_words_groups_counts = {}
+    words_list = text.split()
+    for index, word in enumerate(words_list):
+        if index < x - 1:
+            continue
+        preceding_words = str(words_list[index - x + 1: index + 1])
+        all_words_groups_count += 1
+        if preceding_words in x_words_groups_counts:
+            x_words_groups_counts[preceding_words] += 1
+        else:
+            x_words_groups_counts[preceding_words] = 1
+    return {k: v / all_words_groups_count for k, v in x_words_groups_counts.items()}
 
-
-def get_entropy_for_num(num):
-    file = "data/norm_wiki_en.txt"
-    return get_conditional_entropy(
-        char_probabilities_dict=get_letters_probabilities(file),
-        x_preceding_chars_probabilities_dict=get_x_chars_probabilities(file, num),
-        file=file,
-        x=num
-    )
-
-
-print(list(map(get_entropy_for_num, [0, 1, 2, 3, 4])))

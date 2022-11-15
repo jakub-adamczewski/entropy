@@ -1,5 +1,5 @@
-from util import get_entropy
-from util import get_words_probabilities
+from entropies import get_entropy
+from probabilities import get_words_probabilities
 from scipy.stats import entropy
 
 probabilities = get_words_probabilities(file="data/norm_wiki_en.txt")
