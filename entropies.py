@@ -36,7 +36,7 @@ def get_joint_entropy_words(words_probabilities_dict, x_preceding_words_probabil
 
 
 # H(X/Y) for letters
-def get_conditional_entropy_letters(char_probabilities_dict, x_preceding_chars_probabilities_dict: dict, file, x):
+def get_conditional_entropy_chars(char_probabilities_dict, x_preceding_chars_probabilities_dict: dict, file, x):
     joint_x_y_entropy = get_joint_entropy_letters(
         char_probabilities_dict=char_probabilities_dict,
         x_preceding_chars_probabilities_dict=x_preceding_chars_probabilities_dict,
