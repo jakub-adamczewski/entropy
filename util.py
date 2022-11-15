@@ -17,3 +17,18 @@ def get_letters_probabilities(file):
                 else:
                     characters_counts[c] = 1
     return {k: v / all_chars_count for k, v in characters_counts.items()}
+
+
+def get_words_probabilities(file):
+    with open(file=file, mode="r") as f:
+        all_words_count = 0
+        words_counts = {}
+        for line in f.readlines():
+            words_list = line.split()
+            for word in words_list:
+                all_words_count += 1
+                if word in words_counts:
+                    words_counts[word] += 1
+                else:
+                    words_counts[word] = 1
+    return {k: v / all_words_count for k, v in words_counts.items()}
