@@ -2,17 +2,37 @@ import math
 import numpy as np
 
 
+# H(X)
 def get_entropy(probabilities):
     return -sum(map(lambda p: p * math.log(p, 2), probabilities))
 
 
-def joint_entropy(X, Y):
-    probs = []
-    for c1 in set(X):
-        for c2 in set(Y):
-            probs.append(np.mean(np.logical_and(X == c1, Y == c2)))
+# H(X,Y)
+def get_joint_entropy(char_probabilities_dict, x_preceding_chars_probabilities_dict, file, x):
+    multiplied_probabilities = []
+    with open(file=file, mode="r") as f:
+        for line in f.readlines():
+            for index, c in enumerate(line):
+                if index < x:
+                    continue
+                preceding_chars = line[index - x: index]
+                p_x_y = char_probabilities_dict[c] * x_preceding_chars_probabilities_dict[preceding_chars]
+                multiplied_probabilities.append(p_x_y)
+    return -sum(map(lambda p: p * math.log(p, 2), multiplied_probabilities))
 
-    return np.sum(-p * np.log2(p) for p in probs)
+
+# H(X/Y)
+def get_conditional_entropy(char_probabilities_dict, x_preceding_chars_probabilities_dict: dict, file, x):
+    joint_x_y_entropy = get_joint_entropy(
+        char_probabilities_dict=char_probabilities_dict,
+        x_preceding_chars_probabilities_dict=x_preceding_chars_probabilities_dict,
+        file=file,
+        x=x
+    )
+    y_entropy = get_entropy(
+        probabilities=list(x_preceding_chars_probabilities_dict.values())
+    )
+    return joint_x_y_entropy - y_entropy
 
 
 def get_letters_probabilities(file):
@@ -29,22 +49,39 @@ def get_letters_probabilities(file):
     return {k: v / all_chars_count for k, v in characters_counts.items()}
 
 
-def get_letter_probabilities_after_x_chars(file, x):
+# def get_letter_probabilities_after_x_chars(file, x):
+#     with open(file=file, mode="r") as f:
+#         all_chars_count = 0
+#         characters_counts_with_x_preceding_chars = {}
+#         for line in f.readlines():
+#             for index, c in enumerate(line):
+#                 if index < x:
+#                     continue
+#                 preceding_chars = line[index - x: index]
+#                 key = preceding_chars + "/" + c
+#                 all_chars_count += 1
+#                 if key in characters_counts_with_x_preceding_chars:
+#                     characters_counts_with_x_preceding_chars[key] += 1
+#                 else:
+#                     characters_counts_with_x_preceding_chars[key] = 1
+#     return {k: v / all_chars_count for k, v in characters_counts_with_x_preceding_chars.items()}
+
+
+def get_x_chars_probabilities(file, x):
     with open(file=file, mode="r") as f:
-        all_chars_count = 0
-        characters_counts_with_x_preceding_chars = {}
+        all_x_chars_count = 0
+        x_chars_probabilities = {}
         for line in f.readlines():
             for index, c in enumerate(line):
-                if index < x:
+                if index < x - 1:
                     continue
-                preceding_chars = line[index - x: index]
-                key = preceding_chars + "/" + c
-                all_chars_count += 1
-                if key in characters_counts_with_x_preceding_chars:
-                    characters_counts_with_x_preceding_chars[key] += 1
+                x_chars = line[index - x + 1: index + 1]
+                all_x_chars_count += 1
+                if x_chars in x_chars_probabilities:
+                    x_chars_probabilities[x_chars] += 1
                 else:
-                    characters_counts_with_x_preceding_chars[key] = 1
-    return {k: v / all_chars_count for k, v in characters_counts_with_x_preceding_chars.items()}
+                    x_chars_probabilities[x_chars] = 1
+    return {k: v / all_x_chars_count for k, v in x_chars_probabilities.items()}
 
 
 def get_words_probabilities(file):
