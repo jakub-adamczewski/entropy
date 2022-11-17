@@ -60,22 +60,24 @@
 # for result in word_results:
 #     show_plot(type="word", file=result[1], data=result[2], y_max=plots_word_max, y_min=plots_word_min)
 
-def foo(bar, result, index):
-    print 'hello {0}'.format(bar)
-    result[index] = "foo"
+import multiprocessing
 
-from threading import Thread
 
-threads = [None] * 10
-results = [None] * 10
+def worker(procnum, return_dict):
+    """worker function"""
+    print(str(procnum) + " represent!")
+    return_dict[procnum] = procnum
 
-for i in range(len(threads)):
-    threads[i] = Thread(target=foo, args=('world!', results, i))
-    threads[i].start()
 
-# do some other stuff
+if __name__ == "__main__":
+    manager = multiprocessing.Manager()
+    return_dict = manager.dict()
+    jobs = []
+    for i in range(5):
+        p = multiprocessing.Process(target=worker, args=(i, return_dict))
+        jobs.append(p)
+        p.start()
 
-for i in range(len(threads)):
-    threads[i].join()
-
-print " ".join(results)
+    for proc in jobs:
+        proc.join()
+    print(return_dict.values())

@@ -7,7 +7,7 @@ def save_plot(type: str, file: str, data, y_max=None, y_min=None):
     plt.xlabel("levels")
     plt.ylabel("entropies")
     plt.title(f"{type} entropies for {file}")
-    # plt.xticks(np.arange(len(data)), np.arange(1, len(data) + 1))
+    plt.xticks(np.arange(len(data)), np.arange(1, len(data) + 1))
     if y_min is not None and y_max is not None:
         ax = plt.gca()
         ax.set_ylim([y_min, y_max])

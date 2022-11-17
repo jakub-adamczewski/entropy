@@ -64,7 +64,7 @@ def get_conditional_entropy_words(words_probabilities_dict, x_preceding_words_pr
     return joint_x_y_entropy - y_entropy
 
 
-def get_char_conditional_entropies(file, conditional_entropy_levels=(0, 1, 2, 3, 4)):
+def get_char_conditional_entropies(file, conditional_entropy_levels=(1, 2, 3, 4)):
     return list(
         (get_conditional_entropy_chars(
             char_probabilities_dict=probabilities.get_chars_probabilities(file),
@@ -75,7 +75,7 @@ def get_char_conditional_entropies(file, conditional_entropy_levels=(0, 1, 2, 3,
     )
 
 
-def get_word_conditional_entropies(file, conditional_entropy_levels=(0, 1, 2, 3, 4)):
+def get_word_conditional_entropies(file, conditional_entropy_levels=(1, 2, 3, 4)):
     return list(
         (get_conditional_entropy_words(
             words_probabilities_dict=probabilities.get_words_probabilities(file),
