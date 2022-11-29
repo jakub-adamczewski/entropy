@@ -14,7 +14,7 @@ files = [
 levels = [1, 2, 3, 4]
 
 
-def create_plits_with_already_calculated_conditional_entropies():
+def create_plots_with_already_calculated_conditional_entropies():
     char_entropies = [[2.9158942162629677, 2.0003594568493464, 1.5392820427984704, 1.4385819746138613],
                       [3.2391501954800406, 2.8612798881409267, 2.326684943904885, 1.8135102123783182],
                       [3.050439544594746, 2.4676604975534184, 1.9397725879224512, 1.7020328355856251],
@@ -35,5 +35,5 @@ def create_plits_with_already_calculated_conditional_entropies():
 
 
 if __name__ == "__main__":
-    # calculate_all_entropies_for_files(files=files, levels=levels)
-    create_plits_with_already_calculated_conditional_entropies()
+    calculate_all_entropies_for_files(files=files, levels=levels)
+    # create_plots_with_already_calculated_conditional_entropies()
