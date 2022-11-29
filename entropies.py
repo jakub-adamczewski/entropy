@@ -1,5 +1,5 @@
 import math
-import probabilities
+import quantities
 
 
 # H(X)
@@ -8,50 +8,24 @@ def get_entropy(probabilities: list):
 
 
 # H(X/Y) for letters
-def get_conditional_entropy_chars(char_probabilities_dict, x_preceding_chars_probabilities_dict: dict, file, x):
-    joint_x_y_entropy = get_joint_entropy_letters(
-        char_probabilities_dict=char_probabilities_dict,
-        x_preceding_chars_probabilities_dict=x_preceding_chars_probabilities_dict,
-        file=file,
-        x=x
-    )
-    y_entropy = get_entropy(
-        probabilities=list(x_preceding_chars_probabilities_dict.values())
-    )
-    return joint_x_y_entropy - y_entropy
+def get_conditional_entropy_chars(file, level):
+    (all_chunks_quantities, all_chunks_count) = quantities.get_x_chars_quantities(file, level + 1)
+    (preceding_chunks_quantities, preceding_chunks_count) = quantities.get_x_chars_quantities(file, level)
+    entropy = 0
+    for chunk, quantity in all_chunks_quantities.items():
+        joint_probability = quantity / all_chunks_count
+        conditional_probability = quantity / preceding_chunks_quantities[chunk[0:-1]]
+        entropy -= joint_probability * math.log(conditional_probability, 2)
+    return entropy
 
 
 # H(X/Y) for words
-def get_conditional_entropy_words(words_probabilities_dict, x_preceding_words_probabilities_dict: dict, file, x):
-    joint_x_y_entropy = get_joint_entropy_words(
-        words_probabilities_dict=words_probabilities_dict,
-        x_preceding_words_probabilities_dict=x_preceding_words_probabilities_dict,
-        file=file,
-        x=x
-    )
-    y_entropy = get_entropy(
-        probabilities=list(x_preceding_words_probabilities_dict.values())
-    )
-    return joint_x_y_entropy - y_entropy
-
-
-# def get_char_conditional_entropies(file, conditional_entropy_levels=(1, 2, 3, 4)):
-#     return list(
-#         (get_conditional_entropy_chars(
-#             char_probabilities_dict=probabilities.get_chars_probabilities(file),
-#             x_preceding_chars_probabilities_dict=probabilities.get_x_chars_probabilities(file, level),
-#             file=file,
-#             x=level
-#         ) for level in conditional_entropy_levels)
-#     )
-#
-#
-# def get_word_conditional_entropies(file, conditional_entropy_levels=(1, 2, 3, 4)):
-#     return list(
-#         (get_conditional_entropy_words(
-#             words_probabilities_dict=probabilities.get_words_probabilities(file),
-#             x_preceding_words_probabilities_dict=probabilities.get_x_words_probabilities(file, level),
-#             file=file,
-#             x=level
-#         ) for level in conditional_entropy_levels)
-#     )
+def get_conditional_entropy_words(file, level):
+    (all_words_quantities, all_words_groups_count) = quantities.get_x_words_quantities(file, level + 1)
+    (preceding_words_quantities, preceding_words_count) = quantities.get_x_words_quantities(file, level)
+    entropy = 0
+    for words, quantity in all_words_quantities.items():
+        joint_probability = quantity / all_words_groups_count
+        conditional_probability = quantity / preceding_words_quantities[words[0:-1]]
+        entropy -= joint_probability * math.log(conditional_probability, 2)
+    return entropy

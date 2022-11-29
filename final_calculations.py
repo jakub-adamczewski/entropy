@@ -1,11 +1,12 @@
-import plots
-from util import flatten
-import probabilities
-import entropies
 import multiprocessing
 
+import entropies
+import plots
+from task_1_english_characters_entropy import get_chars_entropy
+from task_2_english_words_entropy import get_words_entropy
 
-def final_calculations_for_files(files):
+
+def calculate_all_entropies_for_files(files: list, levels: list):
     char_entropies = []
     word_entropies = []
 
@@ -13,8 +14,8 @@ def final_calculations_for_files(files):
     return_dict = manager.dict()
     jobs = []
 
-    for i in range(len(files)):
-        p = multiprocessing.Process(target=calculate_entropies_for_file, args=(files[i], return_dict))
+    for i, file in enumerate(files):
+        p = multiprocessing.Process(target=calculate_entropies_for_file, args=(file, levels, return_dict))
         jobs.append(p)
         p.start()
 
@@ -22,44 +23,41 @@ def final_calculations_for_files(files):
         p.join()
 
     for file in files:
-        (chars_entropy, words_entropy, char_conditional_entropies, word_conditional_entropies) = return_dict[file]
+        (char_entropy, words_entropy, char_conditional_entropies, word_conditional_entropies) = return_dict[file]
         print(file)
-        print("Etropia znaków:")
-        print(chars_entropy)
-        print("Etropia słów:")
+        print(f"Entropia znaków:")
+        print(char_entropy)
+        print(f"Entropia słów:")
         print(words_entropy)
-        print("Etropie warunkowe znaków kolejnych rzędów:")
+        print(f"Etropie warunkowe znaków dla rzędów {levels}:")
         print(char_conditional_entropies)
-        print("Etropie warunkowe słów kolejnych rzędów:")
+        print(f"Etropie warunkowe słów dla rzędów {levels}:")
         print(word_conditional_entropies)
         char_entropies.append(char_conditional_entropies)
         word_entropies.append(word_conditional_entropies)
 
-    char_y_max = max(flatten(char_entropies))
-    char_y_min = min(min(flatten(char_entropies)), 0)
-
-    word_y_max = max(flatten(word_entropies))
-    word_y_min = min(min(flatten(word_entropies)), 0)
-
-    for i in range(len(files)):
-        plots.save_plot(type="char", file=files[i], data=char_entropies[i], y_max=char_y_max, y_min=char_y_min)
-        plots.save_plot(type="word", file=files[i], data=word_entropies[i], y_max=word_y_max, y_min=word_y_min)
+    print("all char:")
+    print(char_entropies)
+    print("all word:")
+    print(word_entropies)
 
 
-def calculate_entropies_for_file(file, result):
+def calculate_entropies_for_file(file, levels, result):
     print(f"Calculation for {file} started.")
 
     print(f"{file} 1.")
-    chars_entropy = entropies.get_entropy(list(probabilities.get_chars_probabilities(file).values()))
+    char_entropy = get_chars_entropy(file)
 
     print(f"{file} 2.")
-    words_entropy = entropies.get_entropy(list(probabilities.get_words_probabilities(file).values()))
+    words_entropy = get_words_entropy(file)
 
     print(f"{file} 3.")
-    char_conditional_entropies = entropies.get_char_conditional_entropies(file)
+    char_conditional_entropies: list = [entropies.get_conditional_entropy_chars(file=file, level=level)
+                                        for level in levels]
 
     print(f"{file} 4.")
-    word_conditional_entropies = entropies.get_word_conditional_entropies(file)
+    word_conditional_entropies: list = [entropies.get_conditional_entropy_words(file=file, level=level)
+                                        for level in levels]
 
-    result[file] = (chars_entropy, words_entropy, char_conditional_entropies, word_conditional_entropies)
+    result[file] = (char_entropy, words_entropy, char_conditional_entropies, word_conditional_entropies)
     print(f"Calculation for {file} finished.")
