@@ -2,13 +2,14 @@ import entropies
 import plots
 from final_calculations import calculate_all_entropies_for_files
 
+# sprawdzone odp
 files = [
     "data/sample0.txt",  # nie zawiera
     "data/sample1.txt",  # zawiera
-    "data/sample2.txt",  # zawiera
+    "data/sample2.txt",  # nie zawiera
     "data/sample3.txt",  # zawiera
     "data/sample4.txt",  # nie zawiera
-    "data/sample5.txt",  # zawiera
+    "data/sample5.txt",  # nie zawiera
 ]
 
 levels = [1, 2, 3, 4]

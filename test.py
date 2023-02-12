@@ -15,8 +15,5 @@ if __name__ == "__main__":
     # print(entropies.get_conditional_entropy_chars("data/bananas.txt", 2))
     #
     # print(quantities.get_x_words_quantities("data/words_banana.txt", 2))
-    lst = [0,1,2,3]
-    print(lst)
-    print(lst[0:-1])
-    plots.save_plot([1,2],[1,2],"test","test.txt_char.pdf")
+    print(entropies.get_entropy([1/4,1/4,1/4,1/4]))
 
